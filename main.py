@@ -3,13 +3,16 @@ import os
 from typing import Final
 import logging
 from telegram import Update
-from telegram.ext import Application,CommandHandler,MessageHandler,filters,ContextTypes
+from telegram.ext import Application,CommandHandler,MessageHandler,filters,ContextTypes,CallbackContext
 from aiogram import Bot, Dispatcher, types
 from telegram import InputFile
+import openai
 
 load_dotenv()
 API_TOKEN = os.getenv("TOKEN")
 bot = Bot(token=API_TOKEN)
+openai.api_key = os.getenv('OPENAI_API_KEY')
+
 
 #logging.basicConfig(level=logging.INFO)
 
@@ -18,9 +21,11 @@ BOT_USERNAME: Final = '@Notifierboss_bot'
 #dp = Dispatcher(bot)
 
 #commmands
-async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("hello I am a bot thanks for talking with me")
+async def start_command(update: Update, context: CallbackContext):
+    await update.message.reply_text("Hello! I am a ChatGPT bot. How can I assist you today?")
 
+async def help_command(update: Update, context: CallbackContext):
+    await update.message.reply_text("Need assistance? Just ask! I'm here to help.")
 
 #responses
 def handle_response(text: str) ->str:
@@ -78,22 +83,22 @@ async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(f'Update{update} caused error {context.error}')
 
 #commands
-if __name__=='__main__':
+if __name__ == '__main__':
     print('starting bot...')
     app = Application.builder().token(API_TOKEN).build()
 
-    #commands
-    app.add_handler(CommandHandler('start',start_command))
+    # commands
+    app.add_handler(CommandHandler('start', start_command))
+    app.add_handler(CommandHandler('help', help_command))
 
-    #message
+    # message
     app.add_handler(MessageHandler(filters.TEXT, handle_message))
 
-    #errors
+    # errors
     app.add_error_handler(error)
 
     app.add_handler(CommandHandler('get_profile_picture', get_user_profile_photo))
 
-
-    #Updates
+    # Updates
     print('Polling...')
     app.run_polling(poll_interval=3)
