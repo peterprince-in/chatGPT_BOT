@@ -25,7 +25,10 @@ async def start_command(update: Update, context: CallbackContext):
     await update.message.reply_text("Hello! I am a ChatGPT bot. How can I assist you today?")
 
 async def help_command(update: Update, context: CallbackContext):
-    await update.message.reply_text("Need assistance? Just ask! I'm here to help.")
+    await update.message.reply_text("Need assistance? Just ask! I'm online.")
+
+async def clear_command(update: Update, context: CallbackContext):
+    await update.message.reply_text("Your history is cleared!.")
 
 #responses
 def handle_response(text: str) ->str:
